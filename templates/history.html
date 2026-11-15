@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Workout History</h1>
+    <p>Review your recorded workouts, beginning with the most recent.</p>
+
+    {% if workouts %}
+        <div class="table-wrap" role="region" aria-label="Saved workouts table" tabindex="0">
+            <table>
+                <caption class="visually-hidden">Workout History</caption>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Exercise</th>
+                        <th scope="col">Sets</th>
+                        <th scope="col">Reps</th>
+                        <th scope="col">Weight</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for workout in workouts %}
+                        <tr>
+                            <td>{{ workout.date }}</td>
+                            <td>{{ workout.exercise }}</td>
+                            <td>{{ workout.sets }}</td>
+                            <td>{{ workout.reps }}</td>
+                            <td>{{ workout.weight }} lbs</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <section class="panel">
+            <h2>No workouts recorded yet.</h2>
+            <p>Record your first workout to begin building your training history.</p>
+        </section>
+    {% endif %}
+
+    <p><a class="button" href="{{ url_for('record') }}">{% if workouts %}Record New Workout{% else %}Record Workout{% endif %}</a></p>
+    <p><a href="{{ url_for('progress') }}">Track Exercise Progress</a></p>
+{% endblock %}

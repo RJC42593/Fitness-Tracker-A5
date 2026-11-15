@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Record Workout</h1>
+    <p>
+        Enter your exercise information below to save your workout.
+    </p>
+
+    {% if errors %}
+        <section class="error" id="errors" role="alert" tabindex="-1">
+            <h2>Please correct your workout</h2>
+            <ul>
+                {% for message in errors.values() %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    <div class="layout">
+        <form method="post" id="workout-form" class="panel" novalidate>
+            <input type="hidden" name="csrf" value="{{ session.csrf }}">
+
+            <fieldset>
+                <legend>Choose how to identify your exercise</legend>
+                <p>Either approach works. Select one option to activate its input; you do not need to complete both. Both methods identify the same exercise.</p>
+
+                <label>
+                    <input type="radio" name="mode" value="existing"
+                           {% if values.get('mode') != 'manual' %}checked{% endif %}>
+                    Option A: Select Existing Exercise
+                </label>
+
+                <label for="existing">Exercise Name</label>
+                <select id="existing" name="existing" aria-describedby="exercise-error"
+                        {% if values.get('mode') == 'manual' %}disabled{% endif %}>
+                    <option value="">{{ 'Select Option A to choose' if values.get('mode') == 'manual' else 'Select an exercise' }}</option>
+                    {% for exercise in exercises %}
+                        <option {% if values.get('existing') == exercise %}selected{% endif %}>{{ exercise }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>
+                    <input type="radio" name="mode" value="manual"
+                           {% if values.get('mode') == 'manual' %}checked{% endif %}>
+                    Option B: Enter Exercise Manually
+                </label>
+
+                <label for="manual">Exercise Name (manual)</label>
+                <input type="text" id="manual" name="manual" maxlength="80"
+                       value="{{ values.get('manual', '') }}"
+                       placeholder="{{ 'Enter exercise name' if values.get('mode') == 'manual' else 'Select Option B to type' }}"
+                       aria-describedby="exercise-error"
+                       {% if values.get('mode') != 'manual' %}disabled{% endif %}>
+
+                <p id="exercise-error" class="error-text">{{ errors.get('exercise', '') }}</p>
+            </fieldset>
+
+            <div class="fields">
+                {% for name, label, input_type, placeholder in [
+                    ('date', 'Workout Date', 'date', 'Enter workout date'),
+                    ('sets', 'Sets', 'number', 'e.g., 3'),
+                    ('reps', 'Repetitions', 'number', 'e.g., 8'),
+                    ('weight', 'Weight (lbs)', 'number', 'e.g., 140')
+                ] %}
+                    <div>
+                        <label for="{{ name }}">{{ label }}</label>
+                        <input id="{{ name }}" name="{{ name }}" type="{{ input_type }}"
+                               value="{{ values.get(name, '') }}"
+                               placeholder="{{ placeholder }}"
+                               required
+                               {% if input_type == 'number' %}
+                                   min="{{ 0 if name == 'weight' else 1 }}"
+                                   max="10000"
+                                   step="{{ 'any' if name == 'weight' else '1' }}"
+                               {% endif %}
+                               aria-invalid="{{ 'true' if name in errors else 'false' }}"
+                               aria-describedby="{{ name }}-error">
+                        <p id="{{ name }}-error" class="error-text">{{ errors.get(name, '') }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit">Save Workout</button>
+            <button type="button" id="clear-request" class="secondary">Clear Form</button>
+
+            <p class="warning">
+                Clearing the form will permanently discard any workout information you have entered but not saved.
+            </p>
+        </form>
+
+        <aside class="panel">
+            <h2>Your workout, in three steps</h2>
+            <ol class="steps">
+                <li>Step 1: Select or enter an exercise.</li>
+                <li>Step 2: Enter the workout date, sets, repetitions, and weight.</li>
+                <li>Step 3: Save your workout.</li>
+            </ol>
+            <p>Use this as a guide, not a wizard. Revisit any field before saving.</p>
+
+            <details>
+                <summary>How to Record a Workout</summary>
+                <p>
+                    Select an exercise or enter its name manually. Enter the date of your workout,
+                    the number of sets you performed, the repetitions per set, and the weight used.
+                    Select Save Workout when you're finished.
+                </p>
+            </details>
+        </aside>
+    </div>
+
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+
+    <dialog id="clear-dialog" aria-labelledby="clear-title" aria-describedby="clear-description">
+        <h2 id="clear-title">Clear this workout?</h2>
+        <p id="clear-description">
+            All unsaved workout information will be discarded.
+            This action cannot be undone.
+        </p>
+        <button type="button" id="keep-editing" autofocus>Keep Editing</button>
+        <button type="button" id="clear-confirm" class="danger">Clear Form</button>
+    </dialog>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Saved Workout</h1>
+
+    <section class="panel">
+        <h2 role="status" class="success">Workout saved successfully!</h2>
+
+        <dl>
+            <dt>Exercise</dt>
+            <dd>{{ workout.exercise }}</dd>
+
+            <dt>Workout date</dt>
+            <dd>{{ workout.date }}</dd>
+
+            <dt>Sets</dt>
+            <dd>{{ workout.sets }}</dd>
+
+            <dt>Repetitions</dt>
+            <dd>{{ workout.reps }}</dd>
+
+            <dt>Weight (lbs)</dt>
+            <dd>{{ workout.weight }}</dd>
+        </dl>
+
+        <a class="button" href="{{ url_for('record') }}">Record Another Workout</a>
+        <a class="button secondary" href="{{ url_for('history') }}">View Workout History</a>
+    </section>
+{% endblock %}

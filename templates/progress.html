@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Track Exercise Progress</h1>
+    <p>View how your recorded lifting weights have changed over time.</p>
+
+    <form method="get" id="progress-form" class="panel">
+        <label for="progress-exercise">Exercise</label>
+        <p id="exercise-help" class="visually-hidden">
+            Choosing an exercise updates this page. You can also use View Progress.
+        </p>
+
+        <select id="progress-exercise" name="exercise" aria-describedby="exercise-help">
+            {% for name in exercises %}
+                <option {% if name == exercise %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">View Progress</button>
+    </form>
+
+    {% if chart_image %}
+        <section class="panel">
+            <h2>{{ exercise }}: Weight Progress</h2>
+            <p>Recorded weight per workout · pounds (lbs)</p>
+
+            <div class="chart-wrap" role="region" aria-label="Exercise progress chart" tabindex="0">
+                <img class="progress-image"
+                     src="data:image/png;base64,{{ chart_image }}"
+                     alt="{{ exercise }} lifting weight over workout dates. Exact values are in the table below.">
+            </div>
+
+            <div class="table-wrap" role="region" aria-label="Progress graph data" tabindex="0">
+                <table>
+                    <caption>{{ exercise }} graph data: oldest first</caption>
+
+                    <thead>
+                        <tr>
+                            <th scope="col">Workout date</th>
+                            <th scope="col">Weight (lbs)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for workout in workouts %}
+                            <tr>
+                                <td>{{ workout.date }}</td>
+                                <td>{{ workout.weight }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <section class="panel">
+            <h2>No exercise progress available.</h2>
+            <p>
+                Record a workout to begin tracking your exercise performance.
+            </p>
+            <a class="button" href="{{ url_for('record') }}">Record Workout</a>
+        </section>
+    {% endif %}
+
+    <details>
+        <summary>How to Read Your Progress Graph</summary>
+        <p>
+            This graph shows the weight recorded for your selected exercise during each workout.
+            Comparing the points helps you identify changes in your lifting performance over time.
+        </p>
+    </details>
+
+    <p><a href="{{ url_for('history') }}">Back to Workout History</a></p>
+{% endblock %}

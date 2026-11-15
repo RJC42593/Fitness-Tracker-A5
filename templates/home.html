@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to Fitness Tracker</h1>
+    <p>Record your workouts, monitor your training history, and visualize your strength progress.</p>
+
+    <div class="cards">
+        <section class="panel">
+            <h2>Record Workout</h2>
+            <p>
+                Log your exercises, sets, repetitions, and weights to maintain an accurate training record.
+            </p>
+            <a class="button" href="{{ url_for('record') }}">Record Workout</a>
+        </section>
+
+        <section class="panel">
+            <h2>Workout History</h2>
+            <p>
+                Review your previous workouts to see what exercises you've completed and how your training has changed.
+            </p>
+            <a class="button" href="{{ url_for('history') }}">View Workout History</a>
+        </section>
+
+        <section class="panel">
+            <h2>Track Exercise Progress</h2>
+            <p>
+                Visualize changes in the weights you've lifted over time to better understand your strength improvements.
+            </p>
+            <a class="button" href="{{ url_for('progress') }}">View Exercise Progress</a>
+        </section>
+    </div>
+
+    <section class="panel getting-started">
+        <h2>Getting Started</h2>
+        <p>A suggested sequence: navigate freely at any time.</p>
+
+        <ol class="steps">
+            <li>Step 1: Record your workout.</li>
+            <li>Step 2: Review your saved workouts.</li>
+            <li>Step 3: View your exercise progress.</li>
+        </ol>
+    </section>
+{% endblock %}
